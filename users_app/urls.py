@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import register_or_login, TaskViewSet,check_admin, invitation_user_add, claim, start_farming, start_task_handler, check_blum_status, daily_reward_checker, get_blum, GetUSers, BlumUserViewSet
+from .views import register_or_login, TaskViewSet, add_task, check_admin, invitation_user_add, claim, start_farming, start_task_handler, check_blum_status, daily_reward_checker, get_blum, GetUSers, BlumUserViewSet
 from rest_framework.routers import DefaultRouter
 
 
@@ -18,4 +18,5 @@ urlpatterns = [
     path('daily_reward/', daily_reward_checker),
     path('get_blum/<int:id>/', get_blum),
     path('check/', check_admin),
+    path('add_task/', add_task)
 ] + router.urls

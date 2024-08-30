@@ -26,16 +26,16 @@ def register_or_login(request):
         try:
             user = CustomUser.objects.get(telegram_id=telegram_id, username=username)
             login(request, user)
-            return Response({"message": "Welcome back"}, status=status.HTTP_200_OK)
+            return Response({"username": user.username, "telegram_id": user.telegram_id, "avatar": user.avatar.url, "first_name": user.first_name}, status=status.HTTP_200_OK)
         except CustomUser.DoesNotExist:
             user = CustomUser.objects.create_user(telegram_id=telegram_id, username=username, first_name=name, avatar=avatar)
             user.save()
             blum = Blum.objects.create(user=user, blum_amount=0, start_time=timezone.now())
-            link = f"https://t.me/blum_azizbek_bot/Python Engeneer?start=er_{telegram_id}"
+            link = f"https://t.me/blum_azizbek_bot/PythonEngeneer?start=er_{telegram_id}"
             invite = Invitation.objects.create(user=user, invite_link = link)
             blum.save()
             invite.save()
-            return Response({"message": "Registered successfully"}, status=status.HTTP_201_CREATED)
+            return 
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -172,7 +172,10 @@ def get_blum(request, id):
     return Response({
         "count": blum.blum_amount,
         "username": blum.user.username,
-        "avatar": blum.user.avatar.url
+        "avatar": blum.user.avatar.url,
+        "start_time": blum.start_time,
+        "date": blum.date,
+        "claim": blum.claim
     },
     status=status.HTTP_200_OK)
 
@@ -236,3 +239,18 @@ def check_admin(request):
     return Response({
         "message": "User not found"
     }, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def add_task(request):
+    data = request.data
+    name = data.get('task_name')
+    task_prize_amount = data.get('prize')
+    task_url = data.get('url')
+    
+    tasks = Tasks.objects.create(task_name=name, task_prize_amount=task_prize_amount, task_url=task_url)
+    tasks.save()
+    return Response({
+        "message": "Tasks has been added successfully."
+    }, status=status.HTTP_200_OK)
